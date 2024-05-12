@@ -367,6 +367,20 @@ namespace Traffic2
                 directionSemaphore.Release();
             }
         }
+
+        public void Drive()
+        {
+            TaskCompletionSource<bool> animationTaskCompletionSource = new TaskCompletionSource<bool>();
+
+            //Console.WriteLine("开始行驶...");
+
+            animationTimer.Tick += async (sender, e) => Timer_Tick(sender, e);
+
+            this.Invoke(new MethodInvoker(delegate
+            {
+                animationTimer.Start();
+            }));
+        }
         private bool animationCompleted = false;
         protected void Timer_Tick(object sender, EventArgs e)
         {
@@ -688,6 +702,87 @@ namespace Traffic2
             }
         }
 
+        public void Dispatch()
+        {
+
+        }
+
+        public async Task DriveTask(Direction direction, TrafficLightControl trafficLightControl)
+        {
+            Direction anothorDiretion;
+            if(direction == Direction.East || direction == Direction.West)
+            {
+                anothorDiretion = Direction.North;
+            }
+            else
+            {
+                anothorDiretion = Direction.East;
+            }
+
+            while (true)
+            {
+                for (int laneNum = 1; laneNum <= 2; laneNum++)
+                {
+                    int status = IsAbleToPass(direction, laneNum, trafficLightControl);
+                    if (status != 0)
+                    {
+                        //检查可以通行，执行下面的；否则等待50ms
+                        //Semaphore semaphoreEast = Form1.GetSemaphore2ForDirection(direction);
+                        //Semaphore semaphoreNorth = Form1.GetSemaphore2ForDirection(anothorDiretion);
+                        Semaphore semaphoreEast = Form1.GetSemaphore2ForDirection(Direction.North);
+                        Semaphore semaphoreNorth = Form1.GetSemaphore2ForDirection(Direction.East);
+                        //Semaphore semaphoreSouth = Form1.GetSemaphore2ForDirection(Direction.South);
+
+                        semaphoreEast.WaitOne();
+                        semaphoreNorth.WaitOne();
+                        //semaphoreSouth.WaitOne();
+                        try
+                        {
+                            if (status == 2)
+                            {
+                                await Task.Delay(2000);
+                            }
+                            Lane lane = GetLaneWithDirectionAndLaneNum(direction, laneNum);//获取车道上的车
+                            lane.ExitLane();//进行行驶
+                            if (status == 2)
+                            {
+                                await Task.Delay(1000);
+                            }
+                        }
+                        finally
+                        {
+                            semaphoreNorth.Release();
+                            semaphoreEast.Release();
+                        }
+                    }                    
+                    else
+                    {
+                        await Task.Delay(50);
+                    }
+
+                }
+            }
+
+        }
+
+        public int IsAbleToPass(Direction direction,int laneNum, TrafficLightControl trafficLightControl)
+        { 
+            Lane lane = GetLaneWithDirectionAndLaneNum(direction, laneNum); ;
+            if (trafficLightControl.CanPass())
+            {
+                return 1;                                    
+            }
+            else
+            {
+                if(lane.GetCarQueue().Peek() is SpecialCar)
+                {
+                    return 2;
+                }
+                return 0;
+            }
+            
+        }
+
         public List<Point> CalculateCarPositions(Direction dir, int lane, Size formSize)
         {
             List<Point> positions = new List<Point>();
@@ -797,13 +892,20 @@ namespace Traffic2
             _carQueue.Enqueue(car);
         }
 
-        public void ExitLane(CarBase car)
+        public async void ExitLane()
         {
             if (_carQueue.Count > 0)
             {
-                _carQueue.Dequeue();
+                CarBase car = _carQueue.Dequeue();
+
+                car.Drive();
+
+                //if (car is SpecialCar)                
+                //await Task.Delay(10000);
             }
         }
         public Queue<CarBase> GetCarQueue() { return this._carQueue; }
+
+        
     }
 }

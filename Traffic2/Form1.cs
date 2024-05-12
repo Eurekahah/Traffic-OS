@@ -45,7 +45,8 @@ namespace Traffic2
             foreach (Direction direction in Enum.GetValues(typeof(Direction)))
             {
                 // 为每个方向创建一个新的任务
-                Task task = Task.Run(() => TaskDrive(direction));
+                
+                Task task = Task.Run(() => trafficLaneSystem.DriveTask(direction,trafficLightSystem.GetTrafficLight(direction)));
                 tasks.Add(task);
             }
             Task.WhenAll();
@@ -159,6 +160,8 @@ namespace Traffic2
         public async void TaskDrive(Direction direction)
         {
             List<Task> drivingTasks = new List<Task>();
+
+            
             for (int laneNum = 1; laneNum <= 2; laneNum++)
             {
                 Queue<CarBase> carQueue = trafficLaneSystem.GetLaneWithDirectionAndLaneNum(direction, laneNum).GetCarQueue();                
@@ -218,6 +221,27 @@ namespace Traffic2
             crossSemaphore.WaitOne();
             crossSize++;
             crossSemaphore.Release();
+        }
+
+        private static Semaphore eastSemaphore2 = new Semaphore(1, 1);
+        private static Semaphore northSemaphore2 = new Semaphore(1, 1);
+        //private static Semaphore westSemaphore2 = new Semaphore(1, 1);
+        //private static Semaphore southSemaphore2 = new Semaphore(1, 1);
+        public static Semaphore GetSemaphore2ForDirection(Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.East:
+                    return eastSemaphore2;
+                case Direction.West:
+                    return eastSemaphore2;
+                case Direction.North:
+                    return northSemaphore2;
+                case Direction.South:
+                    return northSemaphore2;
+                default:
+                    throw new ArgumentException("Invalid direction");
+            }
         }
     }
 
