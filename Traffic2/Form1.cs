@@ -33,8 +33,6 @@ namespace Traffic2
             }
             Task.WhenAll();
         }
-
-
         public void InitGUI()
         {            
             this.Size = new Size(800, 800);
@@ -43,7 +41,6 @@ namespace Traffic2
             InitTrafficLight();
             InitRoad();
         }
-
         public void InitTrafficLight()
         {
             TrafficLightControl trafficLight;
@@ -81,7 +78,6 @@ namespace Traffic2
             trafficLightSystem.AddTrafficLight(trafficLight3.GetDirection(), trafficLight3);
 
         }
-
         public void InitRoad()
         {
             Road road1;
@@ -105,12 +101,8 @@ namespace Traffic2
             this.Controls.SetChildIndex(road4, this.Controls.Count - 1);
         }
 
-
-
         private static Semaphore eastSemaphore2 = new Semaphore(1, 1);
         private static Semaphore northSemaphore2 = new Semaphore(1, 1);
-        //private static Semaphore westSemaphore2 = new Semaphore(1, 1);
-        //private static Semaphore southSemaphore2 = new Semaphore(1, 1);
         public static Semaphore GetSemaphore2ForDirection(Direction direction)
         {
             switch (direction)
