@@ -721,46 +721,57 @@ namespace Traffic2
 
             while (true)
             {
+                Semaphore semaphoreEast = Form1.GetSemaphore2ForDirection(Direction.North);
+                Semaphore semaphoreNorth = Form1.GetSemaphore2ForDirection(Direction.East);
+                
                 for (int laneNum = 1; laneNum <= 2; laneNum++)
                 {
-                    int status = IsAbleToPass(direction, laneNum, trafficLightControl);
-                    if (status != 0)
+                    semaphoreEast.WaitOne();
+                    semaphoreNorth.WaitOne();
+                    try
                     {
-                        //检查可以通行，执行下面的；否则等待50ms
-                        //Semaphore semaphoreEast = Form1.GetSemaphore2ForDirection(direction);
-                        //Semaphore semaphoreNorth = Form1.GetSemaphore2ForDirection(anothorDiretion);
-                        Semaphore semaphoreEast = Form1.GetSemaphore2ForDirection(Direction.North);
-                        Semaphore semaphoreNorth = Form1.GetSemaphore2ForDirection(Direction.East);
-                        //Semaphore semaphoreSouth = Form1.GetSemaphore2ForDirection(Direction.South);
+                        int status = IsAbleToPass(direction, laneNum, trafficLightControl);
+                        if (status != 0)
+                        {
+                            //检查可以通行，执行下面的；否则等待50ms
+                            //Semaphore semaphoreEast = Form1.GetSemaphore2ForDirection(direction);
+                            //Semaphore semaphoreNorth = Form1.GetSemaphore2ForDirection(anothorDiretion);
 
-                        semaphoreEast.WaitOne();
-                        semaphoreNorth.WaitOne();
-                        //semaphoreSouth.WaitOne();
-                        try
-                        {
-                            if (status == 2)
+                            //Semaphore semaphoreSouth = Form1.GetSemaphore2ForDirection(Direction.South);
+
+
+                            //semaphoreSouth.WaitOne();
+                            try
                             {
-                                await Task.Delay(2000);
+                                if (status == 2)
+                                {
+                                    await Task.Delay(2000);
+                                }
+                                Lane lane = GetLaneWithDirectionAndLaneNum(direction, laneNum);//获取车道上的车
+                                lane.ExitLane();//进行行驶
+                                if (status == 2)
+                                {
+                                    await Task.Delay(1000);
+                                }
                             }
-                            Lane lane = GetLaneWithDirectionAndLaneNum(direction, laneNum);//获取车道上的车
-                            lane.ExitLane();//进行行驶
-                            if (status == 2)
+                            finally
                             {
-                                await Task.Delay(1000);
+
                             }
                         }
-                        finally
+                        else
                         {
-                            semaphoreNorth.Release();
-                            semaphoreEast.Release();
+                            await Task.Delay(50);
                         }
-                    }                    
-                    else
+                    }
+                    finally
                     {
-                        await Task.Delay(50);
+                        semaphoreNorth.Release();
+                        semaphoreEast.Release();
                     }
 
                 }
+                
             }
 
         }
