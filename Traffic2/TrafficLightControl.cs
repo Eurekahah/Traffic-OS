@@ -723,13 +723,15 @@ namespace Traffic2
             {
                 Semaphore semaphoreEast = Form1.GetSemaphore2ForDirection(Direction.North);
                 Semaphore semaphoreNorth = Form1.GetSemaphore2ForDirection(Direction.East);
-                
-                for (int laneNum = 1; laneNum <= 2; laneNum++)
+
+                semaphoreEast.WaitOne();
+                semaphoreNorth.WaitOne();
+                try
                 {
-                    semaphoreEast.WaitOne();
-                    semaphoreNorth.WaitOne();
-                    try
-                    {
+                    for (int laneNum = 1; laneNum <= 2; laneNum++)
+                {
+                    
+                    
                         int status = IsAbleToPass(direction, laneNum, trafficLightControl);
                         if (status != 0)
                         {
@@ -763,15 +765,18 @@ namespace Traffic2
                         {
                             await Task.Delay(50);
                         }
-                    }
-                    finally
-                    {
-                        semaphoreNorth.Release();
-                        semaphoreEast.Release();
-                    }
+                    
 
+                    }
+                }
+                finally
+                {
+                    //await Task.Delay(100);
+                    semaphoreNorth.Release();
+                    semaphoreEast.Release();
                 }
                 
+
             }
 
         }

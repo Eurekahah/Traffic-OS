@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Traffic2", "Traffic2\Traffic2.csproj", "{9C66BBD7-E58D-4CC9-ABF4-21B73CACE590}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Traffic", "Traffic2\Traffic.csproj", "{9C66BBD7-E58D-4CC9-ABF4-21B73CACE590}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
