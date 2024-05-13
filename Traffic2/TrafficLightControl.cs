@@ -299,74 +299,74 @@ namespace Traffic2
 
         private bool isTaskCompleted = false;
         
-        public virtual async Task Drive(TrafficLightSystem trafficLightSystem, TrafficLaneSystem trafficLaneSystem)
-        {
+        //public virtual async Task Drive(TrafficLightSystem trafficLightSystem, TrafficLaneSystem trafficLaneSystem)
+        //{
             
-            Semaphore directionSemaphore = Form1.GetSemaphoreForDirection(this._carDirection);
+        //    Semaphore directionSemaphore = Form1.GetSemaphoreForDirection(this._carDirection);
 
-            directionSemaphore.WaitOne();
-            try
-            {
-                if (await this.IsAbleToDrive(trafficLightSystem, trafficLaneSystem))
-                {                            
-                    TaskCompletionSource<bool> animationTaskCompletionSource = new TaskCompletionSource<bool>();
+        //    directionSemaphore.WaitOne();
+        //    try
+        //    {
+        //        if (await this.IsAbleToDrive(trafficLightSystem, trafficLaneSystem))
+        //        {                            
+        //            TaskCompletionSource<bool> animationTaskCompletionSource = new TaskCompletionSource<bool>();
 
-                    //Console.WriteLine("开始行驶...");
+        //            //Console.WriteLine("开始行驶...");
 
-                    animationTimer.Tick += async (sender, e) => Timer_Tick(sender, e);
+        //            animationTimer.Tick += async (sender, e) => Timer_Tick(sender, e);
 
-                    this.Invoke(new MethodInvoker(delegate
-                    {
-                        animationTimer.Start();
-                    }));
+        //            this.Invoke(new MethodInvoker(delegate
+        //            {
+        //                animationTimer.Start();
+        //            }));
 
-                    monitorTimer.Tick += async (sender, e) =>
-                    {
-                        int crossSize = Form1.GetCrossSize();
-                        if(this is Car && crossSize<0)
-                        {
-                            this.Invoke(new MethodInvoker(delegate
-                            {
-                                animationTimer.Stop();
-                            }));
-                        }
-                        else
-                        {
-                            if(!animationTimer.Enabled)
-                                if (await this.IsAbleToDrive(trafficLightSystem, trafficLaneSystem))
-                                {
-                                    animationTimer.Tick +=Timer_Tick;
-                                    animationTimer.Start();
-                                }
+        //            monitorTimer.Tick += async (sender, e) =>
+        //            {
+        //                int crossSize = Form1.GetCrossSize();
+        //                if(this is Car && crossSize<0)
+        //                {
+        //                    this.Invoke(new MethodInvoker(delegate
+        //                    {
+        //                        animationTimer.Stop();
+        //                    }));
+        //                }
+        //                else
+        //                {
+        //                    if(!animationTimer.Enabled)
+        //                        if (await this.IsAbleToDrive(trafficLightSystem, trafficLaneSystem))
+        //                        {
+        //                            animationTimer.Tick +=Timer_Tick;
+        //                            animationTimer.Start();
+        //                        }
                                     
                             
-                        }
-                        if (animationCompleted && !isTaskCompleted)
-                        {
-                            animationTaskCompletionSource.SetResult(true);
-                            if (this is SpecialCar)
-                            {
-                                Form1.IncreaseCrossSize();                               
-                            }
-                            isTaskCompleted = true;
-                        }
-                    };
-                    this.Invoke(new MethodInvoker(delegate
-                    {
-                        monitorTimer.Start();
-                    }));
+        //                }
+        //                if (animationCompleted && !isTaskCompleted)
+        //                {
+        //                    animationTaskCompletionSource.SetResult(true);
+        //                    if (this is SpecialCar)
+        //                    {
+        //                        Form1.IncreaseCrossSize();                               
+        //                    }
+        //                    isTaskCompleted = true;
+        //                }
+        //            };
+        //            this.Invoke(new MethodInvoker(delegate
+        //            {
+        //                monitorTimer.Start();
+        //            }));
 
-                    //Console.WriteLine("检测开始");
-                    // 等待动画任务完成
-                    await animationTaskCompletionSource.Task;
+        //            //Console.WriteLine("检测开始");
+        //            // 等待动画任务完成
+        //            await animationTaskCompletionSource.Task;
                 
-                }
-            }
-            finally
-            {
-                directionSemaphore.Release();
-            }
-        }
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        directionSemaphore.Release();
+        //    }
+        //}
 
         public void Drive()
         {
@@ -440,26 +440,26 @@ namespace Traffic2
             animationTimer.Stop();
         }
 
-        public virtual async Task<bool> IsAbleToDrive(TrafficLightSystem trafficLightSystem, TrafficLaneSystem trafficLaneSystem)
-        {
-            TrafficLightControl trafficLight = trafficLightSystem.GetTrafficLight(this._carDirection);
+        //public virtual async Task<bool> IsAbleToDrive(TrafficLightSystem trafficLightSystem, TrafficLaneSystem trafficLaneSystem)
+        //{
+        //    TrafficLightControl trafficLight = trafficLightSystem.GetTrafficLight(this._carDirection);
                
-            while (this.Enabled)
-            {
-                int crossSize = Form1.GetCrossSize();
+        //    while (this.Enabled)
+        //    {
+        //        int crossSize = Form1.GetCrossSize();
 
-                if (trafficLight != null && trafficLight.CanPass() && crossSize==0)
-                {
+        //        if (trafficLight != null && trafficLight.CanPass() && crossSize==0)
+        //        {
                     
-                    return true;
-                }
+        //            return true;
+        //        }
 
-                // 等待一段时间后再次检查
-                await Task.Delay(50);
-            }
+        //        // 等待一段时间后再次检查
+        //        await Task.Delay(50);
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
         public void StartMonitoring()
         {
@@ -564,55 +564,55 @@ namespace Traffic2
             return new Lane (0,1);
         }
 
-        public override async Task<bool> IsAbleToDrive(TrafficLightSystem trafficLightSystem,TrafficLaneSystem trafficLaneSystem)
-        {
-            // 根据车辆方向获取对应的信号量
+        //public override async Task<bool> IsAbleToDrive(TrafficLightSystem trafficLightSystem,TrafficLaneSystem trafficLaneSystem)
+        //{
+        //    // 根据车辆方向获取对应的信号量
             
                         
-            TrafficLightControl trafficLight = trafficLightSystem.GetTrafficLight(this._carDirection);
-            while (this.Enabled)
-            {
-                if (trafficLight != null && trafficLight.CanPass())
-                {
+        //    TrafficLightControl trafficLight = trafficLightSystem.GetTrafficLight(this._carDirection);
+        //    while (this.Enabled)
+        //    {
+        //        if (trafficLight != null && trafficLight.CanPass())
+        //        {
 
-                    return true;
-                }
-                else
-                {
-                    // 获取当前车辆所在的车道
-                    Lane currentLane = trafficLaneSystem.GetLaneWithDirectionAndLaneNum(this._carDirection, this._laneNum);
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            // 获取当前车辆所在的车道
+        //            Lane currentLane = trafficLaneSystem.GetLaneWithDirectionAndLaneNum(this._carDirection, this._laneNum);
 
-                    // 获取前方所有车辆
-                    List<CarBase> carsInFront = currentLane._carQueue.ToList();
+        //            // 获取前方所有车辆
+        //            List<CarBase> carsInFront = currentLane._carQueue.ToList();
 
-                    // 查找当前车辆在队列中的位置
-                    int currentCarIndex = carsInFront.IndexOf(this);
+        //            // 查找当前车辆在队列中的位置
+        //            int currentCarIndex = carsInFront.IndexOf(this);
 
-                    // 如果当前车辆是特种车辆,并且前面所有车辆都是特种车辆,则允许通行
-                    if (this is SpecialCar && carsInFront.TakeWhile((car, index) => index < currentCarIndex).All(car => car is SpecialCar))
-                    {
-                        Form1.DecrementCrossSize();
+        //            // 如果当前车辆是特种车辆,并且前面所有车辆都是特种车辆,则允许通行
+        //            if (this is SpecialCar && carsInFront.TakeWhile((car, index) => index < currentCarIndex).All(car => car is SpecialCar))
+        //            {
+        //                Form1.DecrementCrossSize();
 
-                        return true;
-                    }
+        //                return true;
+        //            }
                     
-                }
-                // 等待一段时间后再次检查
-                await Task.Delay(50);
-            }
+        //        }
+        //        // 等待一段时间后再次检查
+        //        await Task.Delay(50);
+        //    }
 
-            return false;
-            //Task<bool> status = Task.FromResult(false);
-            //if (trafficLight != null)
-            //{ 
-            //    if (trafficLight.CanPass())
-            //    {
-            //        status = Task.FromResult(true);
-            //    }
+        //    return false;
+        //    //Task<bool> status = Task.FromResult(false);
+        //    //if (trafficLight != null)
+        //    //{ 
+        //    //    if (trafficLight.CanPass())
+        //    //    {
+        //    //        status = Task.FromResult(true);
+        //    //    }
                 
-            //}
-            //return await status;
-        }
+        //    //}
+        //    //return await status;
+        //}
     }
 
     public class PoliceCar : SpecialCar
